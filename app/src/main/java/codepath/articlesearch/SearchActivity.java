@@ -20,6 +20,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import Adapter.ArticleArrayAdapter;
 import Model.Article;
 import cz.msebera.android.httpclient.Header;
 
@@ -32,6 +33,7 @@ public class SearchActivity extends AppCompatActivity {
     Button btnSearch;
 
     ArrayList<Article> articles;
+    ArticleArrayAdapter adapter;
 
 
     @Override
@@ -82,8 +84,7 @@ public class SearchActivity extends AppCompatActivity {
 
                 try {
                     articleJSONresults = response.getJSONObject("response").getJSONArray("docs");
-                    articles.addAll(Article.fromJSONArray(articleJSONresults));
-
+                    adapter.addAll(Article.fromJSONArray(articleJSONresults)); // making changes directly to adapter allows me to avoid method notifyDataSetChanged()  
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -101,5 +102,7 @@ public class SearchActivity extends AppCompatActivity {
         gvResults = (GridView) findViewById(R.id.gvResults);
         btnSearch = (Button) findViewById(R.id.btnSearch);
         articles = new ArrayList<>();
+        adapter = new ArticleArrayAdapter(this, articles);
+        gvResults.setAdapter(adapter);
     }
 }
