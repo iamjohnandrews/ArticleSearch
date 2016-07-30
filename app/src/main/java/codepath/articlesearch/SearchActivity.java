@@ -67,7 +67,6 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextChange(String newText) {
                 Log.d("DEBUG", "error occured on search query entry");
-                searchView.clearFocus();
                 return false;
             }
         });
@@ -126,9 +125,9 @@ public class SearchActivity extends AppCompatActivity {
         gvResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent navigateToArticle = new Intent(getApplicationContext(), ArticleActivity.class);
+                Intent navigateToArticle = new Intent(getApplicationContext(), StoryActivity.class);
                 Article selectedArticle = articles.get(i);
-                navigateToArticle.putExtra(ArticleActivity.selectedArticle, selectedArticle);
+                navigateToArticle.putExtra(StoryActivity.selectedArticle, selectedArticle);
                 startActivity(navigateToArticle);
             }
         });
