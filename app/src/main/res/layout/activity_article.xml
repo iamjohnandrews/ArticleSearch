@@ -19,4 +19,17 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:src="@drawable/share"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/wvArticle"
+        android:layout_alignRight="@+id/wvArticle"
+        android:layout_alignEnd="@+id/wvArticle"
+        android:layout_marginRight="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="30dp"
+        android:background="@color/colorPrimaryDark" />
+
 </RelativeLayout>
