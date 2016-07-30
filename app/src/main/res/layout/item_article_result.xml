@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <ImageView
-        android:layout_width="105dp"
-        android:layout_height="105dp"
+        android:layout_width="205dp"
+        android:layout_height="205dp"
         android:id="@+id/ivImage"
-        android:scaleType="center"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:scaleType="fitXY"
         android:src="@mipmap/ic_launcher"/>
 
     <TextView
@@ -17,6 +19,9 @@
         android:text="TextView"
         android:maxLines="2"
         android:ellipsize="end"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:textColor="@color/White"
         />
 
     <TextView
@@ -24,6 +29,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/tvDate"
         android:text="Date"
+        android:layout_below="@+id/tvTitle"
         />
 
-</LinearLayout>
+</RelativeLayout>
