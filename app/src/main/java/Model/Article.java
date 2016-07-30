@@ -1,5 +1,8 @@
 package Model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -13,7 +16,7 @@ import java.util.Locale;
 /**
  * Created by andrj148 on 7/29/16.
  */
-public class Article {
+public class Article implements Parcelable {
     String webURL;
     String headline;
     String thumbnail;
@@ -90,4 +93,38 @@ public class Article {
         }
         return results;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.webURL);
+        dest.writeString(this.headline);
+        dest.writeString(this.thumbnail);
+        dest.writeString(this.snippet);
+        dest.writeString(this.date);
+    }
+
+    protected Article(Parcel in) {
+        this.webURL = in.readString();
+        this.headline = in.readString();
+        this.thumbnail = in.readString();
+        this.snippet = in.readString();
+        this.date = in.readString();
+    }
+
+    public static final Parcelable.Creator<Article> CREATOR = new Parcelable.Creator<Article>() {
+        @Override
+        public Article createFromParcel(Parcel source) {
+            return new Article(source);
+        }
+
+        @Override
+        public Article[] newArray(int size) {
+            return new Article[size];
+        }
+    };
 }
