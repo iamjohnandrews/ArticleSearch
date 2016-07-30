@@ -16,4 +16,12 @@
         android:id="@+id/tvTitle"
         android:text="TextView"
         />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvDate"
+        android:text="Date"
+        />
+
 </LinearLayout>
