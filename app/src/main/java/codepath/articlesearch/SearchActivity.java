@@ -111,7 +111,9 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent navigateToArticle = new Intent(getApplicationContext(), ArticleActivity.class);
-                Article selectedArticel = articles.get(i);
+                Article selectedArticle = articles.get(i);
+                navigateToArticle.putExtra(ArticleActivity.selectedArticle, selectedArticle);
+                startActivity(navigateToArticle);
             }
         });
     }
