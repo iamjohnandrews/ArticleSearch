@@ -29,7 +29,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/share" />
+        android:src="@drawable/share"
+        app:layout_behavior="com.codepath.articlesearch.ScrollAwareFABBehavior"
+        />
 
     <include layout="@layout/webview_story"/>
 
