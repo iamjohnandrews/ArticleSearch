@@ -8,6 +8,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by andrj148 on 7/29/16.
@@ -18,7 +19,7 @@ public class Article {
     String thumbnail;
     String snippet;
     String date;
-    private static final String nyTimesURL = "http://www.nytimes.com";
+    private static final String nyTimesURL = "http://www.nytimes.com/";
 
     public String getWebURL() {
         return webURL;
@@ -65,10 +66,10 @@ public class Article {
     private String convertIntoReadableDateFormat(String date) {
         String readableDate = "n/a";
 
-        SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MMM-ddZ");
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         try {
             Date setDate = dateFormatter.parse(date);
-            dateFormatter = new SimpleDateFormat("MMM dd,yyyy");
+            dateFormatter = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
             readableDate = dateFormatter.format(setDate);
         } catch (ParseException e) {
             e.printStackTrace();

@@ -1,12 +1,15 @@
 package Adapter;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -42,7 +45,14 @@ public class ArticleArrayAdapter extends ArrayAdapter<Article> {
         tvDate.setText(selectedArticle.getDate());
 
 
-        
+        String thumbnail = selectedArticle.getThumbnail();
 
+        if (!TextUtils.isEmpty(thumbnail)) {
+            Picasso.with(getContext()).load(thumbnail).into(ivImage);
+        }
+
+        return convertView;
     }
+
+
 }
