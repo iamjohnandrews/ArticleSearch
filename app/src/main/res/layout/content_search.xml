@@ -28,7 +28,8 @@
         android:layout_height="wrap_content"
         android:id="@+id/gvResults"
         android:layout_centerHorizontal="true"
-        android:layout_below="@+id/btnSearch" />
+        android:layout_below="@+id/btnSearch"
+        android:numColumns="3" />
 
     <EditText
         android:layout_width="wrap_content"

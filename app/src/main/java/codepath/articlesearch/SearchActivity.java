@@ -84,7 +84,7 @@ public class SearchActivity extends AppCompatActivity {
 
                 try {
                     articleJSONresults = response.getJSONObject("response").getJSONArray("docs");
-                    adapter.addAll(Article.fromJSONArray(articleJSONresults)); // making changes directly to adapter allows me to avoid method notifyDataSetChanged()  
+                    adapter.addAll(Article.fromJSONArray(articleJSONresults)); // making changes directly to adapter allows me to avoid method notifyDataSetChanged()
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
