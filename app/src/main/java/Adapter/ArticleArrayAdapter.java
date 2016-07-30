@@ -39,11 +39,7 @@ public class ArticleArrayAdapter extends ArrayAdapter<Article> {
         ivImage.setImageResource(0);
 
         TextView tvTitle = (TextView) convertView.findViewById(R.id.tvTitle);
-        tvTitle.setText(selectedArticle.getHeadline());
-
-        TextView tvDate= (TextView) convertView.findViewById(R.id.tvDate);
-        tvDate.setText(selectedArticle.getDate());
-
+        tvTitle.setText(selectedArticle.getHeadline() + System.getProperty("line.separator") + selectedArticle.getDate());
 
         String thumbnail = selectedArticle.getThumbnail();
 
