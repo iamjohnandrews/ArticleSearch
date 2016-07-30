@@ -16,6 +16,7 @@ public class ArticleActivity extends AppCompatActivity {
         setContentView(R.layout.activity_article);
 
         Article chosenArticle = getIntent().getParcelableExtra(selectedArticle);
+        setTitle(chosenArticle.getHeadline());
         loadWebViewInsideActivity(chosenArticle);
     }
 

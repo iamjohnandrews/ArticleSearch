@@ -2,14 +2,15 @@ package codepath.articlesearch;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.GridView;
 
 import com.loopj.android.http.AsyncHttpClient;
@@ -30,9 +31,8 @@ public class SearchActivity extends AppCompatActivity {
 
     static final String ArticleSearchAPIkey = "b23e6d5a33524222962cfd893384d385";
     static final String nyTimesBaseURI = "https://api.nytimes.com/svc/search/v2/articlesearch.json";
-    EditText etQuery;
     GridView gvResults;
-    Button btnSearch;
+    AsyncHttpClient client;
 
     ArrayList<Article> articles;
     ArticleArrayAdapter adapter;
@@ -45,6 +45,7 @@ public class SearchActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        client = new AsyncHttpClient();
         setupViews();
     }
 
@@ -52,7 +53,26 @@ public class SearchActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_search, menu);
-        return true;
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+
+        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                onArticleSearch(query, 0);
+                searchView.clearFocus();
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                Log.d("DEBUG", "error occured on search query entry");
+                searchView.clearFocus();
+                return false;
+            }
+        });
+
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -70,20 +90,18 @@ public class SearchActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void onArticleSearch(View view) {
-        String query = etQuery.getText().toString();
+    public void onArticleSearch(String query, int pageNumber) {
 
-        AsyncHttpClient client = new AsyncHttpClient();
         RequestParams params = new RequestParams();
         params.put("api-key", ArticleSearchAPIkey);
-        params.put("page", 0);
+        params.put("page", pageNumber);
         params.put("q", query);
 
         client.get(nyTimesBaseURI, params, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 JSONArray articleJSONresults = null;
-
+                adapter.clear();
                 try {
                     articleJSONresults = response.getJSONObject("response").getJSONArray("docs");
                     adapter.addAll(Article.fromJSONArray(articleJSONresults)); // making changes directly to adapter allows me to avoid method notifyDataSetChanged()
@@ -100,9 +118,7 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     private void setupViews() {
-        etQuery = (EditText) findViewById(R.id.etQuery);
         gvResults = (GridView) findViewById(R.id.gvResults);
-        btnSearch = (Button) findViewById(R.id.btnSearch);
         articles = new ArrayList<>();
         adapter = new ArticleArrayAdapter(this, articles);
         gvResults.setAdapter(adapter);
@@ -117,4 +133,6 @@ public class SearchActivity extends AppCompatActivity {
             }
         });
     }
+
+
 }
