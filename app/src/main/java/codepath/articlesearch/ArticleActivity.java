@@ -2,6 +2,8 @@ package codepath.articlesearch;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 import Model.Article;
 
@@ -14,5 +16,18 @@ public class ArticleActivity extends AppCompatActivity {
         setContentView(R.layout.activity_article);
 
         Article chosenArticle = getIntent().getParcelableExtra(selectedArticle);
+        loadWebViewInsideActivity(chosenArticle);
+    }
+
+    private void loadWebViewInsideActivity(Article article) {
+        WebView wvStory = (WebView) findViewById(R.id.wvArticle);
+        wvStory.setWebViewClient(new WebViewClient(){
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                view.loadUrl(url);
+                return true;
+            }
+        });
+        wvStory.loadUrl(article.getWebURL());
     }
 }
