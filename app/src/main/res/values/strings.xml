@@ -4,4 +4,7 @@
     <string name="queryPlaceholder">Enter search query</string>
     <string name="searchLabel">Search</string>
     <string name="title_activity_story">StoryActivity</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
