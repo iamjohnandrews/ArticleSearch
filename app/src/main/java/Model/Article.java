@@ -22,6 +22,7 @@ public class Article implements Parcelable {
     String thumbnail;
     String snippet;
     String date;
+
     private static final String nyTimesURL = "http://www.nytimes.com/";
 
     public String getWebURL() {
@@ -91,6 +92,7 @@ public class Article implements Parcelable {
                 e.printStackTrace();
             }
         }
+
         return results;
     }
 

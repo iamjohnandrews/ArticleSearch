@@ -10,6 +10,8 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+
 import Model.Article;
 import codepath.articlesearch.R;
 
@@ -17,7 +19,7 @@ import codepath.articlesearch.R;
  * Created by andrj148 on 7/31/16.
  */
 public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.ViewHolder> {
-    private Article[] articles;
+    private ArrayList<Article> articles;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private CardView cardView;
@@ -36,7 +38,7 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Article givenArticle = articles[position];
+        Article givenArticle = articles.get(position);
         CardView cardView = holder.cardView;
 
         ImageView imageView = (ImageView) cardView.findViewById(R.id.ivStoryImage);
@@ -53,10 +55,10 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.ViewHolder> 
 
     @Override
     public int getItemCount() {
-        return articles.length;
+        return articles.size();
     }
 
-    public StoryAdapter(Article[] articleSearchResults) {
+    public StoryAdapter(ArrayList<Article> articleSearchResults) {
         this.articles = articleSearchResults;
     }
 }

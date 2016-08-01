@@ -24,6 +24,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import Adapter.ArticleArrayAdapter;
+import Fragment.StoryFragment;
 import Model.Article;
 import cz.msebera.android.httpclient.Header;
 
@@ -104,6 +105,7 @@ public class SearchActivity extends AppCompatActivity {
                 try {
                     articleJSONresults = response.getJSONObject("response").getJSONArray("docs");
                     adapter.addAll(Article.fromJSONArray(articleJSONresults)); // making changes directly to adapter allows me to avoid method notifyDataSetChanged()
+                    passArticleSearchResultsToFragment();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -114,6 +116,14 @@ public class SearchActivity extends AppCompatActivity {
                 super.onFailure(statusCode, headers, throwable, errorResponse);
             }
         });
+    }
+
+    public void passArticleSearchResultsToFragment() {
+        Bundle bundle = new Bundle();
+        bundle.putParcelableArrayList("articles", articles);
+
+        StoryFragment fragment = new StoryFragment();
+        fragment.setArguments(bundle);
     }
 
     private void setupViews() {
