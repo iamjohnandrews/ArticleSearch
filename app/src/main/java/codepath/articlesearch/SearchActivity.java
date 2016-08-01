@@ -25,6 +25,7 @@ import java.util.ArrayList;
 
 import Adapter.StoryAdapter;
 import Model.Article;
+import Model.SearchCriteria;
 import cz.msebera.android.httpclient.Header;
 
 public class SearchActivity extends AppCompatActivity {
@@ -54,6 +55,7 @@ public class SearchActivity extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_search, menu);
         MenuItem searchItem = menu.findItem(R.id.action_search);
+        MenuItem filterItem = menu.findItem(R.id.action_filter);
 
         final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -72,6 +74,8 @@ public class SearchActivity extends AppCompatActivity {
             }
         });
 
+
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -83,7 +87,7 @@ public class SearchActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_filter) {
             return true;
         }
 
@@ -96,6 +100,16 @@ public class SearchActivity extends AppCompatActivity {
         params.put("api-key", ArticleSearchAPIkey);
         params.put("page", pageNumber);
         params.put("q", searchQuery);
+
+        SearchCriteria criteria = new SearchCriteria();
+        criteria.query = searchQuery;
+
+        /*
+          'q': "tennis",
+          'fq': "serena",
+          'begin_date': "20150603",
+          'sort': "oldest"
+         */
 
         client.get(nyTimesBaseURI, params, new JsonHttpResponseHandler() {
             @Override
@@ -117,6 +131,8 @@ public class SearchActivity extends AppCompatActivity {
             }
         });
     }
+
+    
 
 
     private void setupViews() {

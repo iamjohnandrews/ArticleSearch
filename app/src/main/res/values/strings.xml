@@ -1,10 +1,10 @@
 <resources>
     <string name="app_name">NY Times Article Search</string>
-    <string name="action_settings">Settings</string>
     <string name="queryPlaceholder">Enter search query</string>
     <string name="searchLabel">Search</string>
     <string name="title_activity_story">StoryActivity</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="datePickerLabel">Select a Begin Date for your search</string>
 </resources>
