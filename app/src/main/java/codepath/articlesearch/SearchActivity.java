@@ -133,6 +133,7 @@ public class SearchActivity extends AppCompatActivity {
         storyRecycler.setAdapter(adapter);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2, GridLayoutManager.VERTICAL, false);
         storyRecycler.setLayoutManager(gridLayoutManager);
+        storyRecycler.setHasFixedSize(true);
         storyRecycler.addOnScrollListener(new EndlessRecyclerViewScrollListener(gridLayoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount) {
