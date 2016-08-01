@@ -28,15 +28,15 @@ import Model.Article;
 import Model.SearchCriteria;
 import cz.msebera.android.httpclient.Header;
 
-public class SearchActivity extends AppCompatActivity {
+public class SearchActivity extends AppCompatActivity implements AdvancedSearchFragment.AdvancedSearchListener {
 
     static final String ArticleSearchAPIkey = "b23e6d5a33524222962cfd893384d385";
     static final String nyTimesBaseURI = "https://api.nytimes.com/svc/search/v2/articlesearch.json";
     GridView gvResults;
     AsyncHttpClient client;
-    String searchQuery;
     ArrayList<Article> articles;
     StoryAdapter adapter;
+    SearchCriteria searchCriteria;
 
 
     @Override
@@ -45,7 +45,7 @@ public class SearchActivity extends AppCompatActivity {
         setContentView(R.layout.activity_search);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        searchCriteria = getSavedSearchCriteria();
         client = new AsyncHttpClient();
         setupViews();
     }
@@ -61,8 +61,8 @@ public class SearchActivity extends AppCompatActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                searchQuery = query;
-                customLoadMoreDataFromApi(0);
+                searchCriteria.query = query;
+                customLoadMoreDataFromApi(0, searchCriteria);
                 searchView.clearFocus();
                 return true;
             }
@@ -73,8 +73,6 @@ public class SearchActivity extends AppCompatActivity {
                 return false;
             }
         });
-
-
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -95,22 +93,35 @@ public class SearchActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void customLoadMoreDataFromApi(int pageNumber) {
+    @Override
+    public void onCompletedUserInput(SearchCriteria criteria) {
+        if (!criteria.query.isEmpty()) {
+            searchCriteria.query = criteria.query;
+        }
+        if (!criteria.beginDate.isEmpty()) {
+            searchCriteria.beginDate = criteria.beginDate;
+        }
+        if (!criteria.sort.isEmpty()) {
+            searchCriteria.sort = criteria.sort;
+        }
+        if (!criteria.category.isEmpty()) {
+            searchCriteria.category = criteria.category;
+        }
+        customLoadMoreDataFromApi(0, criteria);
+    }
+
+    private void customLoadMoreDataFromApi(int pageNumber, SearchCriteria criteria) {
 
         RequestParams params = new RequestParams();
         params.put("api-key", ArticleSearchAPIkey);
         params.put("page", pageNumber);
-        params.put("q", searchQuery);
+        params.put("q", criteria.query);
 
-        SearchCriteria criteria = new SearchCriteria();
-        criteria.query = searchQuery;
-
-        /*
-          'q': "tennis",
-          'fq': "serena",
-          'begin_date': "20150603",
-          'sort': "oldest"
-         */
+        if (criteria != null) {
+            params.put("fq", criteria.category);
+            params.put("begin_date", criteria.beginDate);
+            params.put("sort", criteria.sort);
+        }
 
         client.get(nyTimesBaseURI, params, new JsonHttpResponseHandler() {
             @Override
@@ -157,7 +168,7 @@ public class SearchActivity extends AppCompatActivity {
         storyRecycler.addOnScrollListener(new EndlessRecyclerViewScrollListener(gridLayoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount) {
-                customLoadMoreDataFromApi(page);
+                customLoadMoreDataFromApi(page, searchCriteria);
             }
         });
     }
@@ -168,4 +179,12 @@ public class SearchActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    private void persistSearchCriteria() {
+
+    }
+
+    private SearchCriteria getSavedSearchCriteria() {
+
+        return new SearchCriteria();
+    }
 }

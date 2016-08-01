@@ -35,6 +35,10 @@ public class AdvancedSearchFragment extends DialogFragment {
         // Required empty public constructor
     }
 
+    public interface AdvancedSearchListener {
+        void onCompletedUserInput(SearchCriteria criteria);
+    }
+
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Dialog dialog = super.onCreateDialog(savedInstanceState);
@@ -63,7 +67,8 @@ public class AdvancedSearchFragment extends DialogFragment {
     public void onStop() {
         super.onStop();
         advancedSearchCriteria.category = spinnerCategory.getSelectedItem().toString();
-
+        AdvancedSearchListener listener = (AdvancedSearchListener) getActivity();
+        listener.onCompletedUserInput(advancedSearchCriteria);
     }
 
     private void accessViews(View view) {
