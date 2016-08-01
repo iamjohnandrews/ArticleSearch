@@ -4,13 +4,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.GridView;
 
 import com.loopj.android.http.AsyncHttpClient;
@@ -23,7 +23,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import Adapter.ArticleArrayAdapter;
+import Adapter.StoryAdapter;
 import Model.Article;
 import cz.msebera.android.httpclient.Header;
 
@@ -33,9 +33,9 @@ public class SearchActivity extends AppCompatActivity {
     static final String nyTimesBaseURI = "https://api.nytimes.com/svc/search/v2/articlesearch.json";
     GridView gvResults;
     AsyncHttpClient client;
-
+    String searchQuery;
     ArrayList<Article> articles;
-    ArticleArrayAdapter adapter;
+    StoryAdapter adapter;
 
 
     @Override
@@ -59,7 +59,8 @@ public class SearchActivity extends AppCompatActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                onArticleSearch(query, 0);
+                searchQuery = query;
+                customLoadMoreDataFromApi(0);
                 searchView.clearFocus();
                 return true;
             }
@@ -89,21 +90,22 @@ public class SearchActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void onArticleSearch(String query, int pageNumber) {
+    public void customLoadMoreDataFromApi(int pageNumber) {
 
         RequestParams params = new RequestParams();
         params.put("api-key", ArticleSearchAPIkey);
         params.put("page", pageNumber);
-        params.put("q", query);
+        params.put("q", searchQuery);
 
         client.get(nyTimesBaseURI, params, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 JSONArray articleJSONresults = null;
-                adapter.clear();
+
                 try {
                     articleJSONresults = response.getJSONObject("response").getJSONArray("docs");
-                    adapter.addAll(Article.fromJSONArray(articleJSONresults)); // making changes directly to adapter allows me to avoid method notifyDataSetChanged()
+                    articles.addAll(Article.fromJSONArray(articleJSONresults)); // making changes directly to adapter allows me to avoid method notifyDataSetChanged()
+                    adapter.notifyDataSetChanged();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -116,22 +118,34 @@ public class SearchActivity extends AppCompatActivity {
         });
     }
 
-    private void setupViews() {
-        gvResults = (GridView) findViewById(R.id.gvResults);
-        articles = new ArrayList<>();
-        adapter = new ArticleArrayAdapter(this, articles);
-        gvResults.setAdapter(adapter);
 
-        gvResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+    private void setupViews() {
+        articles = new ArrayList<>();
+        adapter = new StoryAdapter(articles);
+        adapter.setListner(new StoryAdapter.Listener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent navigateToArticle = new Intent(getApplicationContext(), StoryActivity.class);
-                Article selectedArticle = articles.get(i);
-                navigateToArticle.putExtra(StoryActivity.selectedArticle, selectedArticle);
-                startActivity(navigateToArticle);
+            public void onClick(Article selectedArticle) {
+                navigateToChosenArticle(selectedArticle);
+            }
+        });
+
+        RecyclerView storyRecycler = (RecyclerView) findViewById(R.id.storyRecycleView);
+        storyRecycler.setAdapter(adapter);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2, GridLayoutManager.VERTICAL, false);
+        storyRecycler.setLayoutManager(gridLayoutManager);
+        storyRecycler.setHasFixedSize(true);
+        storyRecycler.addOnScrollListener(new EndlessRecyclerViewScrollListener(gridLayoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount) {
+                customLoadMoreDataFromApi(page);
             }
         });
     }
 
+    private void navigateToChosenArticle(Article chosenArticle) {
+        Intent intent = new Intent(this, StoryActivity.class);
+        intent.putExtra(StoryActivity.selectedArticle, chosenArticle);
+        startActivity(intent);
+    }
 
 }

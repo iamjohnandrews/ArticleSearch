@@ -21,16 +21,14 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_story" />
-
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/share"
-        app:layout_behavior="codepath.articlesearch.ScrollAwareFABBehavior"
+        android:src="@drawable/share"/>
+        <!--app:layout_behavior="com.codepath.articlesearch.ScrollAwareFABBehavior"-->
         />
 
     <include layout="@layout/webview_story"/>
