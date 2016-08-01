@@ -125,21 +125,6 @@ public class SearchActivity extends AppCompatActivity {
         storyRecycler.setAdapter(adapter);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2, GridLayoutManager.VERTICAL, false);
         storyRecycler.setLayoutManager(gridLayoutManager);
-
-
-//        gvResults = (GridView) findViewById(R.id.gvResults);
-//        gvResults.setAdapter(adapter);
-//
-//        gvResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-//                Intent navigateToArticle = new Intent(getApplicationContext(), StoryActivity.class);
-//                Article selectedArticle = articles.get(i);
-//                navigateToArticle.putExtra(StoryActivity.selectedArticle, selectedArticle);
-//                startActivity(navigateToArticle);
-//            }
-//        });
     }
-
 
 }
