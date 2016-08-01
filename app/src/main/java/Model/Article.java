@@ -22,6 +22,7 @@ public class Article implements Parcelable {
     String thumbnail;
     String snippet;
     String date;
+    String category;
 
     private static final String nyTimesURL = "http://www.nytimes.com/";
 
@@ -52,6 +53,7 @@ public class Article implements Parcelable {
             this.headline = jsonObject.getJSONObject("headline").getString("main");
             this.snippet = jsonObject.getString("snippet");
             this.date = convertIntoReadableDateFormat(jsonObject.getString("pub_date"));
+            this.category = jsonObject.getString("news_desk");
 
             JSONArray multimedia = jsonObject.getJSONArray("multimedia");
             if (multimedia.length() > 0) {
@@ -108,6 +110,7 @@ public class Article implements Parcelable {
         dest.writeString(this.thumbnail);
         dest.writeString(this.snippet);
         dest.writeString(this.date);
+        dest.writeString(this.category);
     }
 
     protected Article(Parcel in) {
@@ -116,6 +119,7 @@ public class Article implements Parcelable {
         this.thumbnail = in.readString();
         this.snippet = in.readString();
         this.date = in.readString();
+        this.category = in.readString();
     }
 
     public static final Parcelable.Creator<Article> CREATOR = new Parcelable.Creator<Article>() {
