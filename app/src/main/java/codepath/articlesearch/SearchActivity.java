@@ -33,7 +33,7 @@ public class SearchActivity extends AppCompatActivity {
     static final String nyTimesBaseURI = "https://api.nytimes.com/svc/search/v2/articlesearch.json";
     GridView gvResults;
     AsyncHttpClient client;
-
+    String searchQuery;
     ArrayList<Article> articles;
     StoryAdapter adapter;
 
@@ -59,7 +59,8 @@ public class SearchActivity extends AppCompatActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                onArticleSearch(query, 0);
+                searchQuery = query;
+                customLoadMoreDataFromApi(0);
                 searchView.clearFocus();
                 return true;
             }
@@ -89,12 +90,12 @@ public class SearchActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void onArticleSearch(String query, int pageNumber) {
+    public void customLoadMoreDataFromApi(int pageNumber) {
 
         RequestParams params = new RequestParams();
         params.put("api-key", ArticleSearchAPIkey);
         params.put("page", pageNumber);
-        params.put("q", query);
+        params.put("q", searchQuery);
 
         client.get(nyTimesBaseURI, params, new JsonHttpResponseHandler() {
             @Override
@@ -132,6 +133,12 @@ public class SearchActivity extends AppCompatActivity {
         storyRecycler.setAdapter(adapter);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2, GridLayoutManager.VERTICAL, false);
         storyRecycler.setLayoutManager(gridLayoutManager);
+        storyRecycler.addOnScrollListener(new EndlessRecyclerViewScrollListener(gridLayoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount) {
+                customLoadMoreDataFromApi(page);
+            }
+        });
     }
 
     private void navigateToChosenArticle(Article chosenArticle) {
