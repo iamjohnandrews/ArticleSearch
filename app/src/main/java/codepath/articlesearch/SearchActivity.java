@@ -1,5 +1,6 @@
 package codepath.articlesearch;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -120,11 +121,23 @@ public class SearchActivity extends AppCompatActivity {
     private void setupViews() {
         articles = new ArrayList<>();
         adapter = new StoryAdapter(articles);
+        adapter.setListner(new StoryAdapter.Listener() {
+            @Override
+            public void onClick(Article selectedArticle) {
+                navigateToChosenArticle(selectedArticle);
+            }
+        });
 
         RecyclerView storyRecycler = (RecyclerView) findViewById(R.id.storyRecycleView);
         storyRecycler.setAdapter(adapter);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2, GridLayoutManager.VERTICAL, false);
         storyRecycler.setLayoutManager(gridLayoutManager);
+    }
+
+    private void navigateToChosenArticle(Article chosenArticle) {
+        Intent intent = new Intent(this, StoryActivity.class);
+        intent.putExtra(StoryActivity.selectedArticle, chosenArticle);
+        startActivity(intent);
     }
 
 }
