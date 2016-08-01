@@ -21,6 +21,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
 import Adapter.StoryAdapter;
@@ -30,8 +34,9 @@ import cz.msebera.android.httpclient.Header;
 
 public class SearchActivity extends AppCompatActivity implements AdvancedSearchFragment.AdvancedSearchListener {
 
-    static final String ArticleSearchAPIkey = "b23e6d5a33524222962cfd893384d385";
-    static final String nyTimesBaseURI = "https://api.nytimes.com/svc/search/v2/articlesearch.json";
+    static final String ARTICLE_SEARCH_AP_IKEY = "b23e6d5a33524222962cfd893384d385";
+    static final String NY_TIMES_BASE_URI = "https://api.nytimes.com/svc/search/v2/articlesearch.json";
+    static final String SAVED_SEARCHCRITERIA = "savedSearchCriteria";
     GridView gvResults;
     AsyncHttpClient client;
     ArrayList<Article> articles;
@@ -113,7 +118,7 @@ public class SearchActivity extends AppCompatActivity implements AdvancedSearchF
     private void customLoadMoreDataFromApi(int pageNumber, SearchCriteria criteria) {
 
         RequestParams params = new RequestParams();
-        params.put("api-key", ArticleSearchAPIkey);
+        params.put("api-key", ARTICLE_SEARCH_AP_IKEY);
         params.put("page", pageNumber);
         params.put("q", criteria.query);
 
@@ -123,7 +128,7 @@ public class SearchActivity extends AppCompatActivity implements AdvancedSearchF
             params.put("sort", criteria.sort);
         }
 
-        client.get(nyTimesBaseURI, params, new JsonHttpResponseHandler() {
+        client.get(NY_TIMES_BASE_URI, params, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 JSONArray articleJSONresults = null;
@@ -176,15 +181,31 @@ public class SearchActivity extends AppCompatActivity implements AdvancedSearchF
     private void navigateToChosenArticle(Article chosenArticle) {
         Intent intent = new Intent(this, StoryActivity.class);
         intent.putExtra(StoryActivity.selectedArticle, chosenArticle);
+        persistSearchCriteria();
         startActivity(intent);
     }
 
     private void persistSearchCriteria() {
-
+        try {
+            FileOutputStream outStream = openFileOutput(SAVED_SEARCHCRITERIA, MODE_PRIVATE);
+            ObjectOutputStream objectOutStream = new ObjectOutputStream(outStream);
+            objectOutStream.writeObject(searchCriteria);
+            objectOutStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private SearchCriteria getSavedSearchCriteria() {
+        SearchCriteria criteria = new SearchCriteria();
 
-        return new SearchCriteria();
+        try {
+            FileInputStream inStream = openFileInput(SAVED_SEARCHCRITERIA);
+            ObjectInputStream objectInStream = new ObjectInputStream(inStream);
+            criteria = (SearchCriteria) objectInStream.readObject();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return criteria;
     }
 }
