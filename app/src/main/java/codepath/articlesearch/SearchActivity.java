@@ -1,16 +1,15 @@
 package codepath.articlesearch;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.GridView;
 
 import com.loopj.android.http.AsyncHttpClient;
@@ -23,8 +22,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import Adapter.ArticleArrayAdapter;
-import Fragment.StoryFragment;
+import Adapter.StoryAdapter;
 import Model.Article;
 import cz.msebera.android.httpclient.Header;
 
@@ -36,7 +34,7 @@ public class SearchActivity extends AppCompatActivity {
     AsyncHttpClient client;
 
     ArrayList<Article> articles;
-    ArticleArrayAdapter adapter;
+    StoryAdapter adapter;
 
 
     @Override
@@ -101,11 +99,11 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 JSONArray articleJSONresults = null;
-                adapter.clear();
+
                 try {
                     articleJSONresults = response.getJSONObject("response").getJSONArray("docs");
-                    adapter.addAll(Article.fromJSONArray(articleJSONresults)); // making changes directly to adapter allows me to avoid method notifyDataSetChanged()
-                    passArticleSearchResultsToFragment();
+                    articles.addAll(Article.fromJSONArray(articleJSONresults)); // making changes directly to adapter allows me to avoid method notifyDataSetChanged()
+                    adapter.notifyDataSetChanged();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -118,29 +116,29 @@ public class SearchActivity extends AppCompatActivity {
         });
     }
 
-    public void passArticleSearchResultsToFragment() {
-        Bundle bundle = new Bundle();
-        bundle.putParcelableArrayList("articles", articles);
-
-        StoryFragment fragment = new StoryFragment();
-        fragment.setArguments(bundle);
-    }
 
     private void setupViews() {
-        gvResults = (GridView) findViewById(R.id.gvResults);
         articles = new ArrayList<>();
-        adapter = new ArticleArrayAdapter(this, articles);
-        gvResults.setAdapter(adapter);
+        adapter = new StoryAdapter(articles);
 
-        gvResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent navigateToArticle = new Intent(getApplicationContext(), StoryActivity.class);
-                Article selectedArticle = articles.get(i);
-                navigateToArticle.putExtra(StoryActivity.selectedArticle, selectedArticle);
-                startActivity(navigateToArticle);
-            }
-        });
+        RecyclerView storyRecycler = (RecyclerView) findViewById(R.id.storyRecycleView);
+        storyRecycler.setAdapter(adapter);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2, GridLayoutManager.VERTICAL, false);
+        storyRecycler.setLayoutManager(gridLayoutManager);
+
+
+//        gvResults = (GridView) findViewById(R.id.gvResults);
+//        gvResults.setAdapter(adapter);
+//
+//        gvResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+//                Intent navigateToArticle = new Intent(getApplicationContext(), StoryActivity.class);
+//                Article selectedArticle = articles.get(i);
+//                navigateToArticle.putExtra(StoryActivity.selectedArticle, selectedArticle);
+//                startActivity(navigateToArticle);
+//            }
+//        });
     }
 
 
