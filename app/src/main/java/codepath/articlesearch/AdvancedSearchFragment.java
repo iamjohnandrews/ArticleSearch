@@ -1,0 +1,93 @@
+package codepath.articlesearch;
+
+
+import android.app.DialogFragment;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.DatePicker;
+import android.widget.Spinner;
+
+import java.util.Calendar;
+
+import Model.SearchCriteria;
+
+
+/**
+ * A simple {@link Fragment} subclass.
+ */
+public class AdvancedSearchFragment extends DialogFragment {
+
+    public SearchCriteria advancedSearchCriteria;
+    CheckBox checkbox_oldest;
+    CheckBox checkbox_newest;
+    Spinner spinnerCategory;
+    DatePicker datePicker;
+
+    public AdvancedSearchFragment() {
+        // Required empty public constructor
+    }
+
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        advancedSearchCriteria = new SearchCriteria();
+
+        return inflater.inflate(R.layout.fragment_advanced_search, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        accessViews(view);
+        setCurrentDateOnDatePicker();
+        setupCheckBoxListener();
+    }
+
+    private void accessViews(View view) {
+        checkbox_oldest = (CheckBox) view.findViewById(R.id.checkbox_oldest);
+        checkbox_newest = (CheckBox) view.findViewById(R.id.checkbox_newest);
+        spinnerCategory = (Spinner) view.findViewById(R.id.spinnerCategory);
+        datePicker = (DatePicker) view.findViewById(R.id.datePicker);
+    }
+
+    private void setCurrentDateOnDatePicker() {
+        final Calendar today = Calendar.getInstance();
+        datePicker.init(today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.get(Calendar.DAY_OF_MONTH), new DatePicker.OnDateChangedListener() {
+            @Override
+            public void onDateChanged(DatePicker datePicker, int i, int i1, int i2) {
+                advancedSearchCriteria.beginDate = Integer.toString(i) + Integer.toString(i1+1) + Integer.toString(i2);
+            }
+        });
+    }
+
+    private void setupCheckBoxListener() {
+        CheckBox.OnCheckedChangeListener checkedChangeListener = new CheckBox.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                switch (compoundButton.getId()) {
+                    case R.id.checkbox_oldest:
+                        if (b) {
+                            advancedSearchCriteria.sort = "oldest";
+                            checkbox_newest.setChecked(false);
+                        }
+                        break;
+                    case R.id.checkbox_newest:
+                        if (b) {
+                            advancedSearchCriteria.sort = "newest";
+                            checkbox_oldest.setChecked(false);
+                        }
+                        break;
+                }
+            }
+        };
+        checkbox_oldest.setOnCheckedChangeListener(checkedChangeListener);
+        checkbox_newest.setOnCheckedChangeListener(checkedChangeListener);
+    }
+}
