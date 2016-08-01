@@ -5,7 +5,7 @@ package Model;
  */
 public class SearchCriteria {
     public String query;
-    public String advanceSearch;
+    public String category;
     public String beginDate;
     public String sort;
 }

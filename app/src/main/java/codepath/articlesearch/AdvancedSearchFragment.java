@@ -1,12 +1,15 @@
 package codepath.articlesearch;
 
 
+import android.app.Dialog;
 import android.app.DialogFragment;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
@@ -32,6 +35,12 @@ public class AdvancedSearchFragment extends DialogFragment {
         // Required empty public constructor
     }
 
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        Dialog dialog = super.onCreateDialog(savedInstanceState);
+        dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        return dialog;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -50,6 +59,13 @@ public class AdvancedSearchFragment extends DialogFragment {
         setupCheckBoxListener();
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        advancedSearchCriteria.category = spinnerCategory.getSelectedItem().toString();
+
+    }
+
     private void accessViews(View view) {
         checkbox_oldest = (CheckBox) view.findViewById(R.id.checkbox_oldest);
         checkbox_newest = (CheckBox) view.findViewById(R.id.checkbox_newest);
@@ -63,6 +79,7 @@ public class AdvancedSearchFragment extends DialogFragment {
             @Override
             public void onDateChanged(DatePicker datePicker, int i, int i1, int i2) {
                 advancedSearchCriteria.beginDate = Integer.toString(i) + Integer.toString(i1+1) + Integer.toString(i2);
+                Log.d("DEBUG", "user selected date" + advancedSearchCriteria.beginDate);
             }
         });
     }
@@ -90,4 +107,5 @@ public class AdvancedSearchFragment extends DialogFragment {
         checkbox_oldest.setOnCheckedChangeListener(checkedChangeListener);
         checkbox_newest.setOnCheckedChangeListener(checkedChangeListener);
     }
+
 }

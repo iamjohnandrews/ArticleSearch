@@ -88,6 +88,7 @@ public class SearchActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_filter) {
+            showAdvancedSearchDialog();
             return true;
         }
 
@@ -132,7 +133,10 @@ public class SearchActivity extends AppCompatActivity {
         });
     }
 
-    
+    private void showAdvancedSearchDialog() {
+        AdvancedSearchFragment advancedSearchFragment = new AdvancedSearchFragment();
+        advancedSearchFragment.show(getFragmentManager(), "AdvancedSearchFragment");
+    }
 
 
     private void setupViews() {

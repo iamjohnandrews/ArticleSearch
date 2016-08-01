@@ -6,7 +6,8 @@
 
     <!-- TODO: Update blank fragment layout -->
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="vertical" android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:weightSum="1">
 
@@ -36,13 +37,14 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Category"
+            android:text="@string/spinnerLabel"
             android:id="@+id/tvCategory" />
         <Spinner
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/spinnerCategory"
-            android:entries="@array/categories"/>
+            android:entries="@array/categories"
+            android:prompt="@string/spinnerLabel"/>
 
         <TextView
             android:layout_width="wrap_content"
