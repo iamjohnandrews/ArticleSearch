@@ -5,7 +5,6 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -83,10 +82,19 @@ public class AdvancedSearchFragment extends DialogFragment {
         datePicker.init(today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.get(Calendar.DAY_OF_MONTH), new DatePicker.OnDateChangedListener() {
             @Override
             public void onDateChanged(DatePicker datePicker, int i, int i1, int i2) {
-                advancedSearchCriteria.beginDate = Integer.toString(i) + Integer.toString(i1+1) + Integer.toString(i2);
-                Log.d("DEBUG", "user selected date" + advancedSearchCriteria.beginDate);
+                advancedSearchCriteria.beginDate = Integer.toString(i) + formatDateNYTimesStyle(i1+1) + formatDateNYTimesStyle(i2);
             }
         });
+    }
+
+    private String formatDateNYTimesStyle (int i) {
+        String dateString;
+        if (i < 10) {
+            dateString = "0" + Integer.toString(i);
+        } else  {
+            dateString = Integer.toString(i);
+        }
+        return dateString;
     }
 
     private void setupCheckBoxListener() {

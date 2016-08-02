@@ -1,5 +1,6 @@
 package codepath.articlesearch;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
@@ -8,9 +9,9 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.GridView;
 
 import com.loopj.android.http.AsyncHttpClient;
@@ -42,6 +43,7 @@ public class SearchActivity extends AppCompatActivity implements AdvancedSearchF
     ArrayList<Article> articles;
     StoryAdapter adapter;
     SearchCriteria searchCriteria;
+    SearchView searchView;
 
 
     @Override
@@ -50,9 +52,12 @@ public class SearchActivity extends AppCompatActivity implements AdvancedSearchF
         setContentView(R.layout.activity_search);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        searchCriteria = getSavedSearchCriteria();
         client = new AsyncHttpClient();
         setupViews();
+        searchCriteria = getSavedSearchCriteria();
+        if (searchCriteria.query != null) {
+            customLoadMoreDataFromApi(0, searchCriteria);
+        }
     }
 
     @Override
@@ -60,9 +65,8 @@ public class SearchActivity extends AppCompatActivity implements AdvancedSearchF
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_search, menu);
         MenuItem searchItem = menu.findItem(R.id.action_search);
-        MenuItem filterItem = menu.findItem(R.id.action_filter);
 
-        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -74,7 +78,7 @@ public class SearchActivity extends AppCompatActivity implements AdvancedSearchF
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                Log.d("DEBUG", "error occured on search query entry");
+                searchCriteria.query = newText;
                 return false;
             }
         });
@@ -100,19 +104,27 @@ public class SearchActivity extends AppCompatActivity implements AdvancedSearchF
 
     @Override
     public void onCompletedUserInput(SearchCriteria criteria) {
-        if (!criteria.query.isEmpty()) {
+        hideSoftKeyboard();
+        if (criteria.query != null) {
             searchCriteria.query = criteria.query;
         }
-        if (!criteria.beginDate.isEmpty()) {
+        if (criteria.beginDate != null) {
             searchCriteria.beginDate = criteria.beginDate;
         }
-        if (!criteria.sort.isEmpty()) {
+        if (criteria.sort != null) {
             searchCriteria.sort = criteria.sort;
         }
-        if (!criteria.category.isEmpty()) {
+        if (criteria.category != null) {
             searchCriteria.category = criteria.category;
         }
+        articles.clear();
         customLoadMoreDataFromApi(0, criteria);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        persistSearchCriteria();
     }
 
     private void customLoadMoreDataFromApi(int pageNumber, SearchCriteria criteria) {
@@ -122,10 +134,15 @@ public class SearchActivity extends AppCompatActivity implements AdvancedSearchF
         params.put("page", pageNumber);
         params.put("q", criteria.query);
 
-        if (criteria != null) {
-            params.put("fq", criteria.category);
+        if (criteria.beginDate != null) {
             params.put("begin_date", criteria.beginDate);
+        }
+
+        if (criteria.sort != null) {
             params.put("sort", criteria.sort);
+        }
+        if (criteria.category != null) {
+            params.put("fq", criteria.category);
         }
 
         client.get(NY_TIMES_BASE_URI, params, new JsonHttpResponseHandler() {
@@ -147,6 +164,11 @@ public class SearchActivity extends AppCompatActivity implements AdvancedSearchF
                 super.onFailure(statusCode, headers, throwable, errorResponse);
             }
         });
+    }
+
+    private void hideSoftKeyboard(){
+        InputMethodManager imm =(InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(searchView.getWindowToken(), 0);
     }
 
     private void showAdvancedSearchDialog() {
@@ -181,7 +203,6 @@ public class SearchActivity extends AppCompatActivity implements AdvancedSearchF
     private void navigateToChosenArticle(Article chosenArticle) {
         Intent intent = new Intent(this, StoryActivity.class);
         intent.putExtra(StoryActivity.selectedArticle, chosenArticle);
-        persistSearchCriteria();
         startActivity(intent);
     }
 
@@ -201,7 +222,8 @@ public class SearchActivity extends AppCompatActivity implements AdvancedSearchF
 
         try {
             FileInputStream inStream = openFileInput(SAVED_SEARCHCRITERIA);
-            ObjectInputStream objectInStream = new ObjectInputStream(inStream);
+            ObjectInputStream objectInStream = new ObjectInputStream(inStream
+            );
             criteria = (SearchCriteria) objectInStream.readObject();
         } catch (Exception e) {
             e.printStackTrace();
