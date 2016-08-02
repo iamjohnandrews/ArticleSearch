@@ -73,6 +73,7 @@ public class SearchActivity extends AppCompatActivity implements AdvancedSearchF
                 searchCriteria.query = query;
                 customLoadMoreDataFromApi(0, searchCriteria);
                 searchView.clearFocus();
+                articles.clear();
                 return true;
             }
 
@@ -118,7 +119,8 @@ public class SearchActivity extends AppCompatActivity implements AdvancedSearchF
             searchCriteria.category = criteria.category;
         }
         articles.clear();
-        customLoadMoreDataFromApi(0, criteria);
+
+        customLoadMoreDataFromApi(0, searchCriteria);
     }
 
     @Override
